@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload Timetable</title>
+</head>
+<body>
+<h1>Upload Timetable</h1>
+<form method="POST" enctype="multipart/form-data" th:action="@{/upload}">
+    <label for="upload_file">Upload File:</label>
+    <input type="file" name="file" id="upload_file" accept=".xlsx" required /><br/><br/>
+    <button type="submit">Upload</button>
+</form>
+<h2>Enter Your Details</h2>
+<form method="POST" th:action="@{/generate-timetable}">
+    <label for="batch">Batch:</label>
+    <input type="text" name="batch" id="batch" required /><br/><br/>
+    <label for="electives">Electives:</label>
+    <input type="text" name="electives" id="electives" required /><br/><br/>
+    <button type="submit">Get Timetable</button>
+</form>
+</body>
+</html>

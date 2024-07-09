@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload Timetable</title>
+</head>
+<body>
+<form action="#" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+    <label for="file">Select file:</label>
+    <input type="file" id="file" name="file" accept=".xlsx,.xls" required>
+    <label for="batch">Enter Batch:</label>
+    <input type="text" id="batch" name="batch" required>
+    <button type="submit">Upload</button>
+</form>
+<p th:text="${message}"></p>
+<div th:if="${fileContent != null}">
+    <h2>File Content:</h2>
+    <p th:utext="${fileContent}"></p>
+</div>
+</body>
+</html>
+
