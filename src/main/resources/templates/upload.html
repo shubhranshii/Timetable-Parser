@@ -11,17 +11,74 @@
         table {
             width: auto;
             max-width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-bordered td, .table-bordered th {
+            border: 3px solid whitesmoke;
         }
 
         th, td {
-            border: 1px solid #ddd;
+            border: 3px double #000;
             padding: 12px;
             text-align: center;
         }
+
+        .theme1 th, .theme1 td {
+            background-color: #ffccd5; /* Pastel Pink */
+            color: #000;
+        }
+
+        .theme1 th {
+            background-color: #ffb3ba; /* Darker Pastel Pink */
+            color: #fff;
+        }
+
+        .theme2 th, .theme2 td {
+            background-color: #d4edda; /* Pastel Green */
+            color: #000;
+        }
+
+        .theme2 th {
+            background-color: #c3e6cb; /* Darker Pastel Green */
+            color: #fff;
+        }
+
+        .theme3 th, .theme3 td {
+            background-color: #cce5ff; /* Pastel Blue */
+            color: #000;
+        }
+
+        .theme3 th {
+            background-color: #b8daff; /* Darker Pastel Blue */
+            color: #fff;
+        }
+
+        .theme4 th, .theme4 td {
+            background-color: #e2e3e5; /* Pastel Grey */
+            color: #000;
+        }
+
+        .theme4 th {
+            background-color: #d6d8db; /* Darker Pastel Grey */
+            color: #fff;
+        }
+
     </style>
+    <script>
+        function applyTheme() {
+            const theme = document.getElementById('theme').value;
+            const table = document.getElementById('timetable');
+            table.className = 'table table-bordered ' + theme;
+        }
+    </script>
 </head>
 <body>
+<div th:if="${fileContent != null}">
+    <h2>File Content:</h2>
+    <p th:utext="${fileContent}"></p>
+</div>
 <div class="container mt-4">
     <form action="#" th:action="@{/upload}" method="post" enctype="multipart/form-data">
         <div class="form-group">
@@ -32,13 +89,22 @@
             <label for="batch">Enter Batch:</label>
             <input type="text" class="form-control" id="batch" name="batch" required>
         </div>
+        <div class="form-group">
+            <label for="theme">Choose Theme:</label>
+            <select class="form-control" id="theme" name="theme" onchange="applyTheme()">
+                <option value="theme1">Theme 1</option>
+                <option value="theme2">Theme 2</option>
+                <option value="theme3">Theme 3</option>
+                <option value="theme4">Theme 4</option>
+            </select>
+        </div>
         <button type="submit" class="btn btn-primary">Upload</button>
     </form>
     <p th:text="${message}" class="mt-3"></p>
     <div>
         <h2 class="mt-4 mb-3">Timetable:</h2>
         <div class="table">
-            <table class="table table-bordered">
+            <table id="timetable" class="table table-bordered theme1">
                 <thead class="thead-dark">
                 <tr>
                     <th>Day / Time Slot</th>

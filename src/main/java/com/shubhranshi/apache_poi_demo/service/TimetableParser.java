@@ -46,7 +46,7 @@ public class TimetableParser {
                     Cell cell = cells.next();
                     switch (cell.getCellType()) {
                         case STRING:
-                            if (String.valueOf(cell.getStringCellValue()).equalsIgnoreCase("IMPORTANT INFORMATION")) {
+                            if (String.valueOf(cell.getStringCellValue()).equalsIgnoreCase("Short Subject Code")) {
                                 truncate = true;
                                 break;
                             }
@@ -64,7 +64,7 @@ public class TimetableParser {
                     break; // Stop processing rows if "IMPORTANT INFORMATION" is encountered
                 }
 
-                if (rowNum == 1) {
+                if (rowNum == 2) {
                     // The second row contains the time slots
                     timeSlots.addAll(cellValues.subList(1, cellValues.size()));
                     rowNum++;
@@ -102,9 +102,9 @@ public class TimetableParser {
     private boolean isDayOfWeek(String value) {
         switch (value.toUpperCase()) {
             case "MON":
-            case "TUE":
+            case "TUES":
             case "WED":
-            case "THU":
+            case "THUR":
             case "FRI":
             case "SAT":
             case "SUN":
