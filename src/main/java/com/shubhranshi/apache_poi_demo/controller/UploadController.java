@@ -44,7 +44,7 @@ public class UploadController {
             System.out.println(days);
             System.out.println(timeSlots);
             model.addAttribute("message", "File uploaded successfully!");
-            //model.addAttribute("fileContent", generateFileContent(timetable));
+            model.addAttribute("fileContent", generateFileContent(timetable));
             model.addAttribute("timetable", filteredTimetable);
             model.addAttribute("days", days);
             model.addAttribute("timeSlots", timeSlots);

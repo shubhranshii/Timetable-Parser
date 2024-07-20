@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -35,7 +36,6 @@ public class TimetableParser {
             List<String> timeSlots = new ArrayList<>();
             String currentDay = null;
             int rowNum = 0;
-            boolean truncate = false;
 
             while (rows.hasNext()) {
                 Row row = rows.next();
@@ -46,10 +46,6 @@ public class TimetableParser {
                     Cell cell = cells.next();
                     switch (cell.getCellType()) {
                         case STRING:
-                            if (String.valueOf(cell.getStringCellValue()).equalsIgnoreCase("Short Subject Code")) {
-                                truncate = true;
-                                break;
-                            }
                             cellValues.add(cell.getStringCellValue().trim());
                             break;
                         case NUMERIC:
@@ -60,12 +56,8 @@ public class TimetableParser {
                     }
                 }
 
-                if (truncate) {
-                    break; // Stop processing rows if "IMPORTANT INFORMATION" is encountered
-                }
-
-                if (rowNum == 2) {
-                    // The second row contains the time slots
+                if (rowNum == 0) {
+                    // edit the row number according to your excel file
                     timeSlots.addAll(cellValues.subList(1, cellValues.size()));
                     rowNum++;
                     continue;
@@ -76,7 +68,6 @@ public class TimetableParser {
                 if (isDayOfWeek(firstCellValue)) {
                     currentDay = firstCellValue;
                     timetable.putIfAbsent(currentDay, new LinkedHashMap<>());
-                    rowNum++;
                     // Fill in the time slots for the first row of the current day
                     for (int i = 0; i < timeSlots.size(); i++) {
                         String timeSlot = timeSlots.get(i);
@@ -116,5 +107,48 @@ public class TimetableParser {
 
     public Map<String, Map<String, List<String>>> filterTimetableByBatch(Map<String, Map<String, List<String>>> timetable, String batch) {
         return timetableFilterService.filterTimetableByBatch(timetable, batch);
+    }
+
+    public byte[] saveTimetableToExcel(Map<String, Map<String, List<String>>> timetable) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Timetable");
+
+        // Create header row
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("Day / Time Slot");
+
+        // Get all time slots
+        Set<String> allTimeSlots = new LinkedHashSet<>();
+        for (Map<String, List<String>> daySchedule : timetable.values()) {
+            allTimeSlots.addAll(daySchedule.keySet());
+        }
+
+        // Add time slots to header
+        int columnIndex = 1;
+        for (String timeSlot : allTimeSlots) {
+            headerRow.createCell(columnIndex++).setCellValue(timeSlot);
+        }
+
+        // Add data rows
+        int rowIndex = 1;
+        for (Map.Entry<String, Map<String, List<String>>> dayEntry : timetable.entrySet()) {
+            Row dataRow = sheet.createRow(rowIndex++);
+            dataRow.createCell(0).setCellValue(dayEntry.getKey());
+
+            columnIndex = 1;
+            for (String timeSlot : allTimeSlots) {
+                Cell cell = dataRow.createCell(columnIndex++);
+                List<String> classes = dayEntry.getValue().get(timeSlot);
+                if (classes != null && !classes.isEmpty()) {
+                    cell.setCellValue(String.join(", ", classes));
+                }
+            }
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        workbook.write(bos);
+        workbook.close();
+
+        return bos.toByteArray();
     }
 }
