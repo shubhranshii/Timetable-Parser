@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Subject {
-    private String code;
     private String name;
+    private boolean spansTwoColumns;
 }

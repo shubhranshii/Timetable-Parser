@@ -66,19 +66,13 @@
         }
 
     </style>
-    <script>
-        function applyTheme() {
-            const theme = document.getElementById('theme').value;
-            const table = document.getElementById('timetable');
-            table.className = 'table table-bordered ' + theme;
-        }
-    </script>
+    <script th:src="@{/js/timetable-edit.js}"></script>
 </head>
 <body>
-<div th:if="${fileContent != null}">
-    <h2>File Content:</h2>
-    <p th:utext="${fileContent}"></p>
-</div>
+<!--<div th:if="${fileContent != null}">-->
+<!--    <h2>File Content:</h2>-->
+<!--    <p th:utext="${fileContent}"></p>-->
+<!--</div>-->
 <div class="container mt-4">
     <form action="#" th:action="@{/upload}" method="post" enctype="multipart/form-data">
         <div class="form-group">
@@ -116,13 +110,13 @@
                 <tbody>
                 <tr th:each="day : ${days}">
                     <td th:text="${day}"></td>
-                    <td th:each="timeSlot : ${timeSlots}">
-                        <span th:if="${timetable.get(day) != null && timetable.get(day).get(timeSlot) != null}"
-                              th:text="${timetable.get(day).get(timeSlot)}">
-                        </span>
+                    <td th:each="timeSlot : ${timeSlots}" class="editable-cell">
+            <span th:if="${timetable.get(day) != null && timetable.get(day).get(timeSlot) != null}"
+                  th:text="${timetable.get(day).get(timeSlot)}">
+            </span>
                         <span th:unless="${timetable.get(day) != null && timetable.get(day).get(timeSlot) != null}">
-                            ___
-                        </span>
+                ___
+            </span>
                     </td>
                 </tr>
                 </tbody>

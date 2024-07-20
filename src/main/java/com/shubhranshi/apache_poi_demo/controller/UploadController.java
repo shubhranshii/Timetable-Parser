@@ -1,7 +1,6 @@
 package com.shubhranshi.apache_poi_demo.controller;
 
 import com.shubhranshi.apache_poi_demo.service.TimetableParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,6 @@ import java.util.Map;
 @RequestMapping("/")
 public class UploadController {
 
-    @Autowired
     private final TimetableParser timetableParser;
 
     public UploadController(TimetableParser timetableParser) {
@@ -34,6 +32,7 @@ public class UploadController {
         try {
             timetable = timetableParser.parseTimetable(file);
             Map<String, Map<String, List<String>>> filteredTimetable = timetableParser.filterTimetableByBatch(timetable, batch);
+            System.out.println(timetable);
 
             List<String> days = new ArrayList<>(timetable.keySet());
             List<String> timeSlots = new ArrayList<>();
@@ -45,7 +44,7 @@ public class UploadController {
             System.out.println(days);
             System.out.println(timeSlots);
             model.addAttribute("message", "File uploaded successfully!");
-            model.addAttribute("fileContent", generateFileContent(filteredTimetable));
+            //model.addAttribute("fileContent", generateFileContent(timetable));
             model.addAttribute("timetable", filteredTimetable);
             model.addAttribute("days", days);
             model.addAttribute("timeSlots", timeSlots);
@@ -58,7 +57,7 @@ public class UploadController {
         return "upload";
     }
 
-    private String generateFileContent(Map<String, Map<String, List<String>>> filteredTimetable) {
+     private String generateFileContent(Map<String, Map<String, List<String>>> filteredTimetable) {
         StringBuilder fileContent = new StringBuilder();
         for (Map.Entry<String, Map<String, List<String>>> dayEntry : filteredTimetable.entrySet()) {
             fileContent.append(dayEntry.getKey()).append(":<br>");
